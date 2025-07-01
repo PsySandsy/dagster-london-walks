@@ -373,6 +373,36 @@ wheels = [
 ]
 
 [[package]]
+name = "dagster-london-walks"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "dagster" },
+    { name = "dagster-cloud" },
+    { name = "dagster-pandas" },
+    { name = "dagster-webserver" },
+    { name = "pandas" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "dagster-webserver" },
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "dagster" },
+    { name = "dagster-cloud" },
+    { name = "dagster-pandas", specifier = ">=0.26.21" },
+    { name = "dagster-webserver", specifier = ">=1.10.21" },
+    { name = "dagster-webserver", marker = "extra == 'dev'" },
+    { name = "pandas", specifier = ">=2.3.0" },
+    { name = "pytest", marker = "extra == 'dev'" },
+]
+provides-extras = ["dev"]
+
+[[package]]
 name = "dagster-pandas"
 version = "0.26.21"
 source = { registry = "https://pypi.org/simple" }
@@ -913,36 +943,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/6b/e6/479a040eb5b7d4302202b62fa14d1daefdb4f484218922d8d2ad74dcea4f/multidict-6.5.1-cp39-cp39-win_arm64.whl", hash = "sha256:a9e15dfe441aec31e0fa78f497aca83f0ad992ca58782cbaba8220e5a87608fc", size = 41905, upload-time = "2025-06-24T22:16:02.5Z" },
     { url = "https://files.pythonhosted.org/packages/07/9f/d4719ce55a1d8bf6619e8bb92f1e2e7399026ea85ae0c324ec77ee06c050/multidict-6.5.1-py3-none-any.whl", hash = "sha256:895354f4a38f53a1df2cc3fa2223fa714cff2b079a9f018a76cad35e7f0f044c", size = 12185, upload-time = "2025-06-24T22:16:03.816Z" },
 ]
-
-[[package]]
-name = "my-dagster-project"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "dagster" },
-    { name = "dagster-cloud" },
-    { name = "dagster-pandas" },
-    { name = "dagster-webserver" },
-    { name = "pandas" },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "dagster-webserver" },
-    { name = "pytest" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "dagster" },
-    { name = "dagster-cloud" },
-    { name = "dagster-pandas", specifier = ">=0.26.21" },
-    { name = "dagster-webserver", specifier = ">=1.10.21" },
-    { name = "dagster-webserver", marker = "extra == 'dev'" },
-    { name = "pandas", specifier = ">=2.3.0" },
-    { name = "pytest", marker = "extra == 'dev'" },
-]
-provides-extras = ["dev"]
 
 [[package]]
 name = "numpy"
