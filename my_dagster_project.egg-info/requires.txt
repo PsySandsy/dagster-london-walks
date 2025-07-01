@@ -1,0 +1,9 @@
+dagster
+dagster-cloud
+dagster-pandas>=0.26.21
+dagster-webserver>=1.10.21
+pandas>=2.3.0
+
+[dev]
+dagster-webserver
+pytest
