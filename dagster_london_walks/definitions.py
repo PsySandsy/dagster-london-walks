@@ -1,6 +1,6 @@
 from dagster import Definitions, load_assets_from_modules
 
-from my_dagster_project import assets  # noqa: TID252
+from dagster_london_walks import assets  # noqa: TID252
 
 all_assets = load_assets_from_modules([assets])
 
