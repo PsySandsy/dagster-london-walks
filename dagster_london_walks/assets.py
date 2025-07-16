@@ -11,6 +11,7 @@ from dagster import (
     TableRecord,
     TableSchema,
 )
+from dagster_aws.s3 import S3Resource
 from pandas import DataFrame
 
 
