@@ -54,4 +54,6 @@ pip install uv # install uv package & project manager
 uv sync # install python dependencies
 
 .venv\Scripts\activate # activate venv
+
+uv pip install dagster-aws # Install specific package
 ```
