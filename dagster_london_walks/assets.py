@@ -206,8 +206,8 @@ def file_from_s3(s3: S3Resource) -> DataFrame:
     s3_client = s3.get_client()
 
     s3_file = s3_client.get_object(
-        Bucket="need-to-find-the-name-lol",
-        Key="need-to-find" 
+        Bucket="david-dagster-input",
+        Key="london-walks.csv" 
     )
 
     data = DataFrame(s3_file["Body"].read())
