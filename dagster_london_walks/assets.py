@@ -293,7 +293,7 @@ def file_from_s3(s3: S3Resource) -> DataFrame:
 
 
 @asset(group_name="aws_integration")
-def file_from_s3(file_from_s3, s3: S3Resource) -> MaterializeResult:
+def metadata_of_s3_file(file_from_s3, s3: S3Resource) -> MaterializeResult:
 
     data = file_from_s3
 
