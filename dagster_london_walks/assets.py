@@ -12,7 +12,7 @@ from dagster import (
     TableSchema,
 )
 from dagster_aws.s3 import S3Resource
-from pandas import DataFrame
+from pandas import DataFrame, read_csv
 
 
 @asset(group_name="london_loop")
@@ -210,6 +210,6 @@ def file_from_s3(s3: S3Resource) -> DataFrame:
         Key="london-walks.csv" 
     )
 
-    data = DataFrame(s3_file["Body"].read())
+    data = read_csv(s3_file["Body"])
 
     return data
