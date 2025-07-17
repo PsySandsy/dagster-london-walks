@@ -322,7 +322,7 @@ def write_transformation_to_s3(file_from_s3, s3: S3Resource) -> MaterializeResul
 
     s3_client.put_object(
         Bucket="david-dagster-input",
-        Key="transformed-london-walks.csv",
+        Key="processed/london-walks.csv",
         Body=data_with_km.to_csv(index=False),
     )
 
