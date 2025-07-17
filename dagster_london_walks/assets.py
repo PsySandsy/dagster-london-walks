@@ -281,4 +281,4 @@ def file_from_s3(s3: S3Resource) -> Output:
     data = read_csv(s3_file["Body"])
 
     return Output(value=data,
-        {"df": MetadataValue.md(df.to_markdown())})
+        {"data": MetadataValue.md(data.to_markdown())})
