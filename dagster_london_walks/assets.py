@@ -209,6 +209,10 @@ def green_chain() -> DataFrame:
         ],
     }
 
+    green_chain_df = DataFrame(data=d)
+
+    return green_chain_df
+
 @asset(group_name="green_chain")
 def green_chain_sections(green_chain) -> MaterializeResult:
     """
@@ -281,5 +285,5 @@ def file_from_s3(s3: S3Resource) -> MaterializeResult:
     data = read_csv(s3_file["Body"])
 
     return MaterializeResult(
-        value = data
+        value=data.head()
         )
