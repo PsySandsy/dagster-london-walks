@@ -269,7 +269,7 @@ def distances(capital_ring, london_loop) -> MaterializeResult:
     )
 
 @asset(group_name="aws_integration")
-def file_from_s3(s3: S3Resource) -> Output:
+def file_from_s3(s3: S3Resource) ->  -> MaterializeResult:
 
     s3_client = s3.get_client()
 
@@ -280,5 +280,6 @@ def file_from_s3(s3: S3Resource) -> Output:
 
     data = read_csv(s3_file["Body"])
 
-    return Output(value=data,
-        {"data": MetadataValue.md(data.to_markdown())})
+    return MaterializeResult(
+        value = data
+        )
