@@ -100,6 +100,7 @@ def london_loop_sections(london_loop) -> MaterializeResult:
         }
     )
 
+
 @asset(group_name="capital_ring")
 def capital_ring() -> DataFrame:
     """
@@ -166,6 +167,7 @@ def capital_ring_sections(capital_ring) -> MaterializeResult:
         }
     )
 
+
 @asset(group_name="green_chain")
 def green_chain() -> DataFrame:
     """
@@ -188,7 +190,7 @@ def green_chain() -> DataFrame:
             "Elmstead Wood to Chislehurst",
             "Stumps Hill (Beckenham Place Park) to Crystal Palace",
             "Nunhead to Crystal Palace",
-            "Dulwich Park to Sydenham Hill Wood"
+            "Dulwich Park to Sydenham Hill Wood",
         ],
         "distance_miles": [
             2.75,
@@ -205,13 +207,14 @@ def green_chain() -> DataFrame:
             1.7,
             3.7,
             5.9,
-            1.3
+            1.3,
         ],
     }
 
     green_chain_df = DataFrame(data=d)
 
     return green_chain_df
+
 
 @asset(group_name="green_chain")
 def green_chain_sections(green_chain) -> MaterializeResult:
@@ -230,6 +233,7 @@ def green_chain_sections(green_chain) -> MaterializeResult:
             ),
         }
     )
+
 
 # @asset(group_name="aws_integration")
 # def combine_all_walks(london_loop, capital_ring, green_chain) -> DataFrame
@@ -266,28 +270,50 @@ def distances(capital_ring, london_loop) -> MaterializeResult:
                     ),
                     TableRecord(
                         {"Walk": "London Loop", "Distance": london_loop_distance}
-                    )
+                    ),
                 ],
             )
         }
     )
 
+
 @asset(group_name="aws_integration")
 def file_from_s3(s3: S3Resource) -> MaterializeResult:
+    """
+    Read london-walks.csv from S3 and materialise Metadata about it
+    """
 
     s3_client = s3.get_client()
 
-    s3_file = s3_client.get_object(
-        Bucket="david-dagster-input",
-        Key="london-walks.csv" 
-    )
+    s3_file = s3_client.get_object(Bucket="david-dagster-input", Key="london-walks.csv")
 
     data = read_csv(s3_file["Body"])
 
     return MaterializeResult(
         metadata={
             "Number of Sections": MetadataValue.int(len(data.section_name)),
-            "Number of Sections per Walk": MetadataValue.md(data.walk_name.value_counts().to_markdown()),
-            "Preview of DataFrame": MetadataValue.md(data.head().to_markdown())
+            "Number of Sections per Walk": MetadataValue.md(
+                data.walk_name.value_counts().to_markdown()
+            ),
+            "Preview of DataFrame": MetadataValue.md(data.head().to_markdown()),
         }
+    )
+
+
+@asset(group_name="aws_integration")
+def write_transformation_to_s3(file_from_s3, s3: S3Resource):
+    """
+    Apply a Kilometer transformation to the walk data, then write that new df back to S3
+    """
+
+    data = file_from_s3
+
+    data_with_km = data.assign(distance_km=round(data["distance_miles"] * 1.6, 2))
+
+    s3_client = s3.get_client()
+
+    s3_client.put_object(
+        Bucket="david-dagster-input",
+        Key="transformed-london-walks.csv",
+        Body=data_with_km.to_csv(index=False),
     )
