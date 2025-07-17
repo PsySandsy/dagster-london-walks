@@ -269,7 +269,7 @@ def distances(capital_ring, london_loop) -> MaterializeResult:
     )
 
 @asset(group_name="aws_integration")
-def file_from_s3(s3: S3Resource) ->  -> MaterializeResult:
+def file_from_s3(s3: S3Resource) -> MaterializeResult:
 
     s3_client = s3.get_client()
 
