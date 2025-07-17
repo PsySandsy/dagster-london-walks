@@ -221,7 +221,7 @@ def green_chain_sections(green_chain) -> MaterializeResult:
 
     return MaterializeResult(
         metadata={
-            "Sections of the Ring": MetadataValue.md(green_chain.to_markdown()),
+            "Sections of the Green Chain": MetadataValue.md(green_chain.to_markdown()),
             "More Information": MetadataValue.url(
                 "https://innerlondonramblers.org.uk/ideasforwalks/green-chain-walk-guides.html",
             ),
@@ -285,5 +285,10 @@ def file_from_s3(s3: S3Resource) -> MaterializeResult:
     data = read_csv(s3_file["Body"])
 
     return MaterializeResult(
-        value=data.head()
-        )
+        metadata={
+            "Number of London Walks": data.section_name.values
+            "Number of Sections": data.section_name.count()
+            "Number of Sections per Walk": data.section_number.value_counts()
+            "Preview of DataFrame": data.head()
+        }
+    )
