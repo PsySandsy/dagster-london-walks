@@ -328,7 +328,7 @@ def write_transformation_to_s3(file_from_s3, s3: S3Resource) -> MaterializeResul
 
     return MaterializeResult(
         metadata={
-            "Total Length in Miles": MetadataValue.float(data_with_km.distance_miles.sum()),
-            "Total Length in Kilometers": MetadataValue.float(data_with_km.distance_km.sum())
+            "Total Length in Miles": MetadataValue.float(float(data_with_km.distance_miles.sum())),
+            "Total Length in Kilometers": MetadataValue.float(float(data_with_km.distance_km.sum()))
         }
     )
