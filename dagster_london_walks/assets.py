@@ -286,7 +286,7 @@ def file_from_s3(s3: S3Resource) -> MaterializeResult:
 
     return MaterializeResult(
         metadata={
-            "London Walks": MetadataValue.md(data.section_name.values.to_markdown()),
+            "Number of London Walks": MetadataValue.int(data.section_name.unique().to_markdown()),
             "Number of Sections": MetadataValue.int(data.section_name.count()),
             "Number of Sections per Walk": MetadataValue.md(data.section_number.value_counts().to_markdown()),
             "Preview of DataFrame": MetadataValue.md(data.head().to_md())
