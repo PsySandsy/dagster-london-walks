@@ -278,7 +278,7 @@ def distances(capital_ring, london_loop) -> MaterializeResult:
 
 
 @asset(group_name="aws_integration")
-def file_from_s3(s3: S3Resource) -> MaterializeResult:
+def file_from_s3(s3: S3Resource) -> DataFrame:
     """
     Read london-walks.csv from S3 and materialise Metadata about it
     """
@@ -287,7 +287,15 @@ def file_from_s3(s3: S3Resource) -> MaterializeResult:
 
     s3_file = s3_client.get_object(Bucket="david-dagster-input", Key="london-walks.csv")
 
-    data = read_csv(s3_file["Body"])
+    london_walks_df = read_csv(s3_file["Body"])
+
+    return london_walks_df
+
+
+@asset(group_name="aws_integration")
+def file_from_s3(file_from_s3, s3: S3Resource) -> MaterializeResult:
+
+    data = file_from_s3
 
     return MaterializeResult(
         metadata={
@@ -301,7 +309,7 @@ def file_from_s3(s3: S3Resource) -> MaterializeResult:
 
 
 @asset(group_name="aws_integration")
-def write_transformation_to_s3(file_from_s3, s3: S3Resource):
+def write_transformation_to_s3(file_from_s3, s3: S3Resource) -> MaterializeResult:
     """
     Apply a Kilometer transformation to the walk data, then write that new df back to S3
     """
@@ -316,4 +324,11 @@ def write_transformation_to_s3(file_from_s3, s3: S3Resource):
         Bucket="david-dagster-input",
         Key="transformed-london-walks.csv",
         Body=data_with_km.to_csv(index=False),
+    )
+
+    return MaterializeResult(
+        metadata={
+            "Total Length in Miles": MetadataValue.float(data_with_km.distance_miles.sum())
+            "Total Length in Kilometers": MetadataValue.float(data_with_km.distance_km.sum())
+        }
     )
