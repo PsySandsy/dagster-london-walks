@@ -85,7 +85,7 @@ def london_loop() -> DataFrame:
 @asset(group_name="london_loop")
 def london_loop_sections(london_loop) -> MaterializeResult:
     """
-    Show the London Loop DataFrame in Dagster
+    Show metadata about the London Loop in Dagster
     """
 
     return MaterializeResult(
@@ -151,7 +151,7 @@ def capital_ring() -> DataFrame:
 @asset(group_name="capital_ring")
 def capital_ring_sections(capital_ring) -> MaterializeResult:
     """
-    Show the Capital Ring DataFrame in Dagster
+    Show metadata about the Capital Ring in Dagster
     """
 
     return MaterializeResult(
@@ -165,6 +165,74 @@ def capital_ring_sections(capital_ring) -> MaterializeResult:
             ),
         }
     )
+
+@asset(group_name="green_chain")
+def green_chain() -> DataFrame:
+    """
+    Manually create a dataframe showing the routes of The Green Chain Walk
+    """
+
+    d = {
+        "section_name": [
+            "Thamesmead to Lesnes Abbey",
+            "Erith to Bostall Heath",
+            "Bostall Heath to Oxleas Meadow",
+            "Bostall Heath to Charlton Park",
+            "Plumstead Common to Oxleas Meadow",
+            "Thames Barrier to Oxleas Meadow",
+            "Oxleas Wood to Mottingham Lane",
+            "Shepherdleas Wood to Middle Park",
+            "Mottingham Lane to Stumps Hill (Beckenham Place Park)",
+            "Marvels Lane to Elmstead Wood",
+            "Mottingham Lane to Beckenham Place Park",
+            "Elmstead Wood to Chislehurst",
+            "Stumps Hill (Beckenham Place Park) to Crystal Palace",
+            "Nunhead to Crystal Palace",
+            "Dulwich Park to Sydenham Hill Wood"
+        ],
+        "distance_miles": [
+            2.75,
+            3.5,
+            3.8,
+            3.6,
+            1.8,
+            4,
+            3.9,
+            4.3,
+            4.8,
+            0.9,
+            6.2,
+            1.7,
+            3.7,
+            5.9,
+            1.3
+        ],
+    }
+
+@asset(group_name="green_chain")
+def green_chain_sections(green_chain) -> MaterializeResult:
+    """
+    Show metadata about the Green Chain Walk in Dagster
+    """
+
+    return MaterializeResult(
+        metadata={
+            "Sections of the Ring": MetadataValue.md(green_chain.to_markdown()),
+            "More Information": MetadataValue.url(
+                "https://innerlondonramblers.org.uk/ideasforwalks/green-chain-walk-guides.html",
+            ),
+            "Map": MetadataValue.md(
+                "![Pic](https://www.innerlondonramblers.org.uk/images/GreenChainWalk/GCW%20Sections%20v5%20-%20web.jpg)"
+            ),
+        }
+    )
+
+# @asset(group_name="aws_integration")
+# def combine_all_walks(london_loop, capital_ring, green_chain) -> DataFrame
+#     """
+
+#     """
+
 
 @asset()
 def distances(capital_ring, london_loop) -> MaterializeResult:
@@ -201,7 +269,7 @@ def distances(capital_ring, london_loop) -> MaterializeResult:
     )
 
 @asset(group_name="aws_integration")
-def file_from_s3(s3: S3Resource) -> DataFrame:
+def file_from_s3(s3: S3Resource) -> Output:
 
     s3_client = s3.get_client()
 
@@ -212,4 +280,5 @@ def file_from_s3(s3: S3Resource) -> DataFrame:
 
     data = read_csv(s3_file["Body"])
 
-    return data
+    return Output(value=data,
+        {"df": MetadataValue.md(df.to_markdown())})
