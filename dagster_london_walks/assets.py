@@ -236,7 +236,7 @@ def green_chain_sections(green_chain) -> MaterializeResult:
     )
 
 
-@asset(group_name="aws_integration")
+@asset(group_name="aws_integration_raw_to_s3")
 def combine_all_walks(
     london_loop, capital_ring, green_chain, s3: S3Resource
 ) -> DataFrame:
@@ -259,7 +259,7 @@ def combine_all_walks(
 
     return concatenated_df
 
-@asset(group_name="aws_integration")
+@asset(group_name="aws_integration_raw_to_s3")
 def distances(combine_all_walks) -> MaterializeResult:
     """
     Show the total distance of the walks in Dagster
@@ -300,7 +300,7 @@ def distances(combine_all_walks) -> MaterializeResult:
         }
     )
 
-@asset(group_name="aws_integration")
+@asset(group_name="aws_integration_raw_to_s3")
 def write_raw_file_to_s3(combine_all_walks, s3: S3Resource):
     """
     Write the combined walks dataframe to S3 as a CSV with today's date as a prefix.
@@ -317,7 +317,7 @@ def write_raw_file_to_s3(combine_all_walks, s3: S3Resource):
     )
 
 
-@asset(group_name="aws_integration")
+@asset(group_name="aws_integration_processed_to_s3")
 def file_from_s3(s3: S3Resource) -> DataFrame:
     """
     Read today's london-walks.csv from S3 and materialise Metadata about it
@@ -334,7 +334,7 @@ def file_from_s3(s3: S3Resource) -> DataFrame:
     return london_walks_df
 
 
-@asset(group_name="aws_integration")
+@asset(group_name="aws_integration_processed_to_s3")
 def metadata_of_s3_file(file_from_s3) -> MaterializeResult:
     data = file_from_s3
 
@@ -349,7 +349,7 @@ def metadata_of_s3_file(file_from_s3) -> MaterializeResult:
     )
 
 
-@asset(group_name="aws_integration")
+@asset(group_name="aws_integration_processed_to_s3")
 def write_transformation_to_s3(file_from_s3, s3: S3Resource) -> MaterializeResult:
     """
     Apply a Kilometer transformation to the walk data, then write that new df back to S3
