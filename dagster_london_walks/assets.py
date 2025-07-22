@@ -268,11 +268,14 @@ def combine_all_walks(
 
 
 @asset()
-def distances(capital_ring, london_loop) -> MaterializeResult:
+def distances(
+    london_loop, capital_ring, green_chain
+) -> MaterializeResult:
     """
-    Show the total distance of the Capital Ring & London Loop in Dagster
+    Show the total distance of the walks in Dagster
     """
 
+    green_chain_distance = float(green_chain.distance_miles.sum())
     capital_ring_distance = float(capital_ring.distance_miles.sum())
     london_loop_distance = float(london_loop.distance_miles.sum())
 
@@ -290,6 +293,9 @@ def distances(capital_ring, london_loop) -> MaterializeResult:
                     ]
                 ),
                 records=[
+                    TableRecord(
+                        {"Walk": "Green Chain Walk", "Distance": green_chain_distance}
+                    ),
                     TableRecord(
                         {"Walk": "Capital Ring", "Distance": capital_ring_distance}
                     ),
@@ -311,7 +317,7 @@ def file_from_s3(s3: S3Resource) -> DataFrame:
     s3_client = s3.get_client()
 
     s3_file = s3_client.get_object(
-        Bucket="david-dagster-input", Key=f"{date.today()}_london-walks.csv"
+        Bucket="david-dagster-input", Key=f"raw/{date.today()}_london-walks.csv"
     )
 
     london_walks_df = read_csv(s3_file["Body"])
