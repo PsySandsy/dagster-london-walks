@@ -1,5 +1,5 @@
 """
-Software-defined Assets of an Hello World variable
+Software-defined assets of 3 of London's walking routes
 """
 
 from dagster import (
@@ -12,7 +12,8 @@ from dagster import (
     TableSchema,
 )
 from dagster_aws.s3 import S3Resource
-from pandas import DataFrame, read_csv
+from datetime import date
+from pandas import concat, DataFrame, read_csv
 
 
 @asset(group_name="london_loop")
@@ -235,11 +236,35 @@ def green_chain_sections(green_chain) -> MaterializeResult:
     )
 
 
-# @asset(group_name="aws_integration")
-# def combine_all_walks(london_loop, capital_ring, green_chain) -> DataFrame
-#     """
+@asset(group_name="aws_integration")
+def combine_all_walks(
+    london_loop, capital_ring, green_chain, s3: S3Resource
+):
+    """
+    Combine the dataframes of the London Loop, Capital Ring, and Green Chain Walk together.
+    Then write this to S3 as a CSV with today's date as a prefix.
+    """
 
-#     """
+    london_loop_with_walk_name = london_loop.assign(walk_name="London Loop")
+    capital_ring_with_walk_name = capital_ring.assign(walk_name="Capital Ring")
+    green_chain_with_walk_name = green_chain.assign(walk_name="Green Chain Walk")
+
+    concatenated_df = concat(
+        [
+            london_loop_with_walk_name,
+            capital_ring_with_walk_name,
+            green_chain_with_walk_name,
+        ],
+        ignore_index=True,
+    )
+
+    s3_client = s3.get_client()
+
+    s3_client.put_object(
+        Bucket="david-dagster-input",
+        Key=f"raw/{date.today()}_london-walks.csv",
+        Body=concatenated_df.to_csv(index=False),
+    )
 
 
 @asset()
@@ -280,12 +305,14 @@ def distances(capital_ring, london_loop) -> MaterializeResult:
 @asset(group_name="aws_integration")
 def file_from_s3(s3: S3Resource) -> DataFrame:
     """
-    Read london-walks.csv from S3 and materialise Metadata about it
+    Read today's london-walks.csv from S3 and materialise Metadata about it
     """
 
     s3_client = s3.get_client()
 
-    s3_file = s3_client.get_object(Bucket="david-dagster-input", Key="london-walks.csv")
+    s3_file = s3_client.get_object(
+        Bucket="david-dagster-input", Key=f"{date.today()}_london-walks.csv"
+    )
 
     london_walks_df = read_csv(s3_file["Body"])
 
@@ -293,8 +320,7 @@ def file_from_s3(s3: S3Resource) -> DataFrame:
 
 
 @asset(group_name="aws_integration")
-def metadata_of_s3_file(file_from_s3, s3: S3Resource) -> MaterializeResult:
-
+def metadata_of_s3_file(file_from_s3) -> MaterializeResult:
     data = file_from_s3
 
     return MaterializeResult(
@@ -322,13 +348,17 @@ def write_transformation_to_s3(file_from_s3, s3: S3Resource) -> MaterializeResul
 
     s3_client.put_object(
         Bucket="david-dagster-input",
-        Key="processed/london-walks.csv",
+        Key=f"processed/{date.today()}_london-walks.csv",
         Body=data_with_km.to_csv(index=False),
     )
 
     return MaterializeResult(
         metadata={
-            "Total Length in Miles": MetadataValue.float(round(float(data_with_km.distance_miles.sum()), 2)),
-            "Total Length in Kilometers": MetadataValue.float(round(float(data_with_km.distance_km.sum()), 2))
+            "Total Length in Miles": MetadataValue.float(
+                round(float(data_with_km.distance_miles.sum()), 2)
+            ),
+            "Total Length in Kilometers": MetadataValue.float(
+                round(float(data_with_km.distance_km.sum()), 2)
+            ),
         }
     )
