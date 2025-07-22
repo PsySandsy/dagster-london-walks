@@ -239,10 +239,9 @@ def green_chain_sections(green_chain) -> MaterializeResult:
 @asset(group_name="aws_integration")
 def combine_all_walks(
     london_loop, capital_ring, green_chain, s3: S3Resource
-):
+) -> DataFrame:
     """
     Combine the dataframes of the London Loop, Capital Ring, and Green Chain Walk together.
-    Then write this to S3 as a CSV with today's date as a prefix.
     """
 
     london_loop_with_walk_name = london_loop.assign(walk_name="London Loop")
@@ -258,26 +257,19 @@ def combine_all_walks(
         ignore_index=True,
     )
 
-    s3_client = s3.get_client()
+    return concatenated_df
 
-    s3_client.put_object(
-        Bucket="david-dagster-input",
-        Key=f"raw/{date.today()}_london-walks.csv",
-        Body=concatenated_df.to_csv(index=False),
-    )
-
-
-@asset()
-def distances(
-    london_loop, capital_ring, green_chain
-) -> MaterializeResult:
+@asset(group_name="aws_integration")
+def distances(combine_all_walks) -> MaterializeResult:
     """
     Show the total distance of the walks in Dagster
     """
 
-    green_chain_distance = float(green_chain.distance_miles.sum())
-    capital_ring_distance = float(capital_ring.distance_miles.sum())
-    london_loop_distance = float(london_loop.distance_miles.sum())
+    concatenated_df = combine_all_walks
+
+    london_loop_distance = float(concatenated_df.query('walk_name == "London Loop"').distance_miles.sum())
+    capital_ring_distance = float(concatenated_df.query('walk_name == "Capital Ring"').distance_miles.sum())
+    green_chain_distance = float(concatenated_df.query('walk_name == "Green Chain Walk"').distance_miles.sum())
 
     return MaterializeResult(
         metadata={
@@ -294,17 +286,34 @@ def distances(
                 ),
                 records=[
                     TableRecord(
-                        {"Walk": "Green Chain Walk", "Distance": green_chain_distance}
+                        {"Walk": "London Loop", "Distance": london_loop_distance}
                     ),
                     TableRecord(
                         {"Walk": "Capital Ring", "Distance": capital_ring_distance}
                     ),
                     TableRecord(
-                        {"Walk": "London Loop", "Distance": london_loop_distance}
+                        {"Walk": "Green Chain Walk", "Distance": green_chain_distance}
                     ),
+                                       
                 ],
             )
         }
+    )
+
+@asset(group_name="aws_integration")
+def write_raw_file_to_s3(combine_all_walks, s3: S3Resource):
+    """
+    Write the combined walks dataframe to S3 as a CSV with today's date as a prefix.
+    """
+
+    concatenated_df = combine_all_walks
+
+    s3_client = s3.get_client()
+
+    s3_client.put_object(
+        Bucket="david-dagster-input",
+        Key=f"raw/{date.today()}_london-walks.csv",
+        Body=concatenated_df.to_csv(index=False),
     )
 
 
