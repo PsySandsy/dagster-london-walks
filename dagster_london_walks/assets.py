@@ -317,7 +317,7 @@ def write_raw_file_to_s3(combine_all_walks, s3: S3Resource):
     )
 
 
-@asset(group_name="aws_integration_processed_to_s3")
+@asset(deps=["write_raw_file_to_s3"], group_name="aws_integration_processed_to_s3")
 def file_from_s3(s3: S3Resource) -> DataFrame:
     """
     Read today's london-walks.csv from S3 and materialise Metadata about it
