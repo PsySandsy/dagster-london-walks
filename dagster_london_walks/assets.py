@@ -23,6 +23,7 @@ def london_loop() -> DataFrame:
     """
 
     d = {
+        "walk_name": "London Loop",
         "section_number": list(range(1, 25)),
         "section_name": [
             "Erith to Old Bexley",
@@ -109,6 +110,8 @@ def capital_ring() -> DataFrame:
     """
 
     d = {
+        "walk_name": "Capital Ring",
+        "section_number": list(range(1, 16)),
         "section_name": [
             "Woolwich to Falconwood",
             "Falconwood to Grove Park",
@@ -176,6 +179,8 @@ def green_chain() -> DataFrame:
     """
 
     d = {
+        "walk_name": "Green Chain Walk",
+        "section_number": list(range(1, 16)),
         "section_name": [
             "Thamesmead to Lesnes Abbey",
             "Erith to Bostall Heath",
@@ -244,15 +249,11 @@ def combine_all_walks(
     Combine the dataframes of the London Loop, Capital Ring, and Green Chain Walk together.
     """
 
-    london_loop_with_walk_name = london_loop.assign(walk_name="London Loop")
-    capital_ring_with_walk_name = capital_ring.assign(walk_name="Capital Ring")
-    green_chain_with_walk_name = green_chain.assign(walk_name="Green Chain Walk")
-
     concatenated_df = concat(
         [
-            london_loop_with_walk_name,
-            capital_ring_with_walk_name,
-            green_chain_with_walk_name,
+            london_loop,
+            capital_ring,
+            green_chain,
         ],
         ignore_index=True,
     )
