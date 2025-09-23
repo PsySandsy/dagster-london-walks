@@ -341,46 +341,46 @@ def distances(combine_all_walks) -> MaterializeResult:
 #     return london_walks_df
 
 
-@asset(group_name="aws_integration_processed_to_s3")
-def metadata_of_s3_file(file_from_s3) -> MaterializeResult:
-    data = file_from_s3
+# @asset(group_name="aws_integration_processed_to_s3")
+# def metadata_of_s3_file(file_from_s3) -> MaterializeResult:
+#     data = file_from_s3
 
-    return MaterializeResult(
-        metadata={
-            "Number of Sections": MetadataValue.int(len(data.section_name)),
-            "Number of Sections per Walk": MetadataValue.md(
-                data.walk_name.value_counts().to_markdown()
-            ),
-            "Preview of DataFrame": MetadataValue.md(data.head().to_markdown()),
-        }
-    )
+#     return MaterializeResult(
+#         metadata={
+#             "Number of Sections": MetadataValue.int(len(data.section_name)),
+#             "Number of Sections per Walk": MetadataValue.md(
+#                 data.walk_name.value_counts().to_markdown()
+#             ),
+#             "Preview of DataFrame": MetadataValue.md(data.head().to_markdown()),
+#         }
+#     )
 
 
-@asset(group_name="aws_integration_processed_to_s3")
-def write_transformation_to_s3(file_from_s3, s3: S3Resource) -> MaterializeResult:
-    """
-    Apply a Kilometer transformation to the walk data, then write that new df back to S3
-    """
+# @asset(group_name="aws_integration_processed_to_s3")
+# def write_transformation_to_s3(file_from_s3, s3: S3Resource) -> MaterializeResult:
+#     """
+#     Apply a Kilometer transformation to the walk data, then write that new df back to S3
+#     """
 
-    data = file_from_s3
+#     data = file_from_s3
 
-    data_with_km = data.assign(distance_km=round(data["distance_miles"] * 1.6, 2))
+#     data_with_km = data.assign(distance_km=round(data["distance_miles"] * 1.6, 2))
 
-    s3_client = s3.get_client()
+#     s3_client = s3.get_client()
 
-    s3_client.put_object(
-        Bucket="david-dagster-input",
-        Key=f"processed/{date.today()}_london-walks.csv",
-        Body=data_with_km.to_csv(index=False),
-    )
+#     s3_client.put_object(
+#         Bucket="david-dagster-input",
+#         Key=f"processed/{date.today()}_london-walks.csv",
+#         Body=data_with_km.to_csv(index=False),
+#     )
 
-    return MaterializeResult(
-        metadata={
-            "Total Length in Miles": MetadataValue.float(
-                round(float(data_with_km.distance_miles.sum()), 2)
-            ),
-            "Total Length in Kilometers": MetadataValue.float(
-                round(float(data_with_km.distance_km.sum()), 2)
-            ),
-        }
-    )
+#     return MaterializeResult(
+#         metadata={
+#             "Total Length in Miles": MetadataValue.float(
+#                 round(float(data_with_km.distance_miles.sum()), 2)
+#             ),
+#             "Total Length in Kilometers": MetadataValue.float(
+#                 round(float(data_with_km.distance_km.sum()), 2)
+#             ),
+#         }
+#     )
