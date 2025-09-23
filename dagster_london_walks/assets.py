@@ -241,7 +241,7 @@ def green_chain_sections(green_chain) -> MaterializeResult:
     )
 
 
-@asset(group_name="aws_integration_raw_to_s3")
+@asset(group_name="meta_data_exploration")
 def combine_all_walks(
     london_loop, capital_ring, green_chain
     # , s3: S3Resource
@@ -261,7 +261,7 @@ def combine_all_walks(
 
     return concatenated_df
 
-@asset(group_name="aws_integration_raw_to_s3")
+@asset(group_name="meta_data_exploration")
 def distances(combine_all_walks) -> MaterializeResult:
     """
     Show the total distance of the walks in Dagster
@@ -307,7 +307,7 @@ def distances(combine_all_walks) -> MaterializeResult:
         }
     )
 
-# @asset(group_name="aws_integration_raw_to_s3")
+# @asset(group_name="meta_data_exploration")
 # def write_raw_file_to_s3(combine_all_walks, s3: S3Resource):
 #     """
 #     Write the combined walks dataframe to S3 as a CSV with today's date as a prefix.
