@@ -6,5 +6,6 @@ from dagster_london_walks import assets  # noqa: TID252
 all_assets = load_assets_from_modules([assets])
 
 defs = Definitions(
-    assets=all_assets, resources={"s3": S3Resource(region_name="eu-west-2")}
+    assets=all_assets
+    # resources={"s3": S3Resource(region_name="eu-west-2")}
 )

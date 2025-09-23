@@ -11,7 +11,7 @@ from dagster import (
     TableRecord,
     TableSchema,
 )
-from dagster_aws.s3 import S3Resource
+# from dagster_aws.s3 import S3Resource
 from datetime import date
 from pandas import concat, DataFrame, read_csv
 
@@ -297,42 +297,47 @@ def distances(combine_all_walks) -> MaterializeResult:
                     ),
                                        
                 ],
-            )
+            ),
+        "Number of Sections": MetadataValue.int(len(concatenated_df.section_name)),
+        "Number of Sections per Walk": MetadataValue.md(
+                concatenated_df.walk_name.value_counts().to_markdown()
+            ),
+        "Preview of DataFrame": MetadataValue.md(concatenated_df.head().to_markdown()),
         }
     )
 
-@asset(group_name="aws_integration_raw_to_s3")
-def write_raw_file_to_s3(combine_all_walks, s3: S3Resource):
-    """
-    Write the combined walks dataframe to S3 as a CSV with today's date as a prefix.
-    """
+# @asset(group_name="aws_integration_raw_to_s3")
+# def write_raw_file_to_s3(combine_all_walks, s3: S3Resource):
+#     """
+#     Write the combined walks dataframe to S3 as a CSV with today's date as a prefix.
+#     """
 
-    concatenated_df = combine_all_walks
+#     concatenated_df = combine_all_walks
 
-    s3_client = s3.get_client()
+#     s3_client = s3.get_client()
 
-    s3_client.put_object(
-        Bucket="david-dagster-input",
-        Key=f"raw/{date.today()}_london-walks.csv",
-        Body=concatenated_df.to_csv(index=False),
-    )
+#     s3_client.put_object(
+#         Bucket="david-dagster-input",
+#         Key=f"raw/{date.today()}_london-walks.csv",
+#         Body=concatenated_df.to_csv(index=False),
+#     )
 
 
-@asset(deps=["write_raw_file_to_s3"], group_name="aws_integration_processed_to_s3")
-def file_from_s3(s3: S3Resource) -> DataFrame:
-    """
-    Read today's london-walks.csv from S3 and materialise Metadata about it
-    """
+# @asset(deps=["write_raw_file_to_s3"], group_name="aws_integration_processed_to_s3")
+# def file_from_s3(s3: S3Resource) -> DataFrame:
+#     """
+#     Read today's london-walks.csv from S3 and materialise Metadata about it
+#     """
 
-    s3_client = s3.get_client()
+#     s3_client = s3.get_client()
 
-    s3_file = s3_client.get_object(
-        Bucket="david-dagster-input", Key=f"raw/{date.today()}_london-walks.csv"
-    )
+#     s3_file = s3_client.get_object(
+#         Bucket="david-dagster-input", Key=f"raw/{date.today()}_london-walks.csv"
+#     )
 
-    london_walks_df = read_csv(s3_file["Body"])
+#     london_walks_df = read_csv(s3_file["Body"])
 
-    return london_walks_df
+#     return london_walks_df
 
 
 @asset(group_name="aws_integration_processed_to_s3")
