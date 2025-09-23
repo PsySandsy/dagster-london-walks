@@ -243,7 +243,8 @@ def green_chain_sections(green_chain) -> MaterializeResult:
 
 @asset(group_name="aws_integration_raw_to_s3")
 def combine_all_walks(
-    london_loop, capital_ring, green_chain, s3: S3Resource
+    london_loop, capital_ring, green_chain
+    # , s3: S3Resource
 ) -> DataFrame:
     """
     Combine the dataframes of the London Loop, Capital Ring, and Green Chain Walk together.
