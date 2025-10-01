@@ -12,11 +12,11 @@ COPY pyproject.toml uv.lock ./
 COPY . /app
 
 # Create vitural environment and sync dependencies
-RUN uv venv && uv sync --all-groups
+RUN uv venv && uv sync --group all
 RUN uv pip list
 
 # Expose Dagster dev UI port
-EXPOSE 3000
+EXPOSE 80
 
 # Start Dagster dev server
-CMD ["uv", "run", "dagster", "dev", "-h", "0.0.0.0", "-p", "3000"]
+# CMD ["uv", "run", "dagster", "dev", "-h", "0.0.0.0", "-p", "3000"]
