@@ -1,0 +1,55 @@
+section_number,section_name,distance_miles,walk_name
+1,Erith to Old Bexley,8.7,London Loop
+2,Old Bexley to Petts Wood,7.5,London Loop
+3,Petts Wood to West Wickham Common,9.3,London Loop
+4,West Wickham Common to Hamsey Green,9.3,London Loop
+5,Hamsey Green to Coulsdon South,6.4,London Loop
+6,Coulsdon South to Banstead Downs,5,London Loop
+7,Banstead Downs to Ewell,4.1,London Loop
+8,Ewell to Kingston Bridge,8,London Loop
+9,Kingston Bridge to Hatton Cross,10,London Loop
+10,Hatton Cross to Hayes & Harlington,4,London Loop
+11,Hayes & Harlington to Uxbridge,7.5,London Loop
+12,Uxbridge to Harefield West,5.2,London Loop
+13,Harefield West to Moor Park,5.2,London Loop
+14,Moor Park to Hatch End,4.8,London Loop
+15,Hatch End to Elstree,9.3,London Loop
+16,Elstree to Cockfosters,10.9,London Loop
+17,Cockfosters to Enfield Lock,8.8,London Loop
+18,Enfield Lock to Chingford,5,London Loop
+19,Chingford to Chigwell,4.5,London Loop
+20,Chigwell to Havering-atte-Bower,6.6,London Loop
+21,Havering-atte-Bower to Harold Wood,5,London Loop
+22,Harold Wood to Upminster Bridge,4.5,London Loop
+23,Upminster Bridge to Rainham,4.5,London Loop
+24,Rainham to Purfleet,5.1,London Loop
+1,Woolwich to Falconwood,7.2,Capital Ring
+2,Falconwood to Grove Park,4.4,Capital Ring
+3,Grove Park to Crystal Palace,7.8,Capital Ring
+4,Crystal Palace to Streatham,4.4,Capital Ring
+5,Streatham to Wimbledon Park,5.7,Capital Ring
+6,Wimbledon Park to Richmond,7.3,Capital Ring
+7,Richmond to Osterley Lock,4.8,Capital Ring
+8,Osterley Lock to Greenford,5.5,Capital Ring
+9,Greenford to South Kenton,5.6,Capital Ring
+10,South Kenton to Hendon Park,7,Capital Ring
+11,Hendon Park to Highgate,5.6,Capital Ring
+12,Highgate to Stoke Newington,5.6,Capital Ring
+13,Stoke Newington to Hackney Wick,4,Capital Ring
+14,Hackney Wick to Beckton District Park,5.2,Capital Ring
+15,Beckton District Park to Woolwich,4.4,Capital Ring
+1,Thamesmead to Lesnes Abbey,2.75,Green Chain Walk
+2,Erith to Bostall Heath,3.5,Green Chain Walk
+3,Bostall Heath to Oxleas Meadow,3.8,Green Chain Walk
+4,Bostall Heath to Charlton Park,3.6,Green Chain Walk
+4a,Plumstead Common to Oxleas Meadow,1.8,Green Chain Walk
+5,Thames Barrier to Oxleas Meadow,4,Green Chain Walk
+6,Oxleas Wood to Mottingham Lane,3.9,Green Chain Walk
+7,Shepherdleas Wood to Middle Park,4.3,Green Chain Walk
+8,Mottingham Lane to Stumps Hill (Beckenham Place Park),4.8,Green Chain Walk
+8a,Marvels Lane to Elmstead Wood,0.9,Green Chain Walk
+9,Mottingham Lane to Beckenham Place Park,6.2,Green Chain Walk
+9a,Elmstead Wood to Chislehurst,1.7,Green Chain Walk
+10,Stumps Hill (Beckenham Place Park) to Crystal Palace,3.7,Green Chain Walk
+11,Nunhead to Crystal Palace,5.9,Green Chain Walk
+11a,Dulwich Park to Sydenham Hill Wood,1.3,Green Chain Walk
